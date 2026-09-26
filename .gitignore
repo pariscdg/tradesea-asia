@@ -1,0 +1,10 @@
+.tradesea-browser-profile/
+.asia-*.json
+.asia-lockouts/
+.asia-lockout.mutex
+__pycache__/
+*.log
+*.log.*
+self-check.json
+modified-response.json
+.vscode/
