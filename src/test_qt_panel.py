@@ -24,6 +24,9 @@ class QtControllerTests(unittest.TestCase):
         self.register = patch('panel_bridge.ensure_schedule')
         self.register_mock = self.register.start()
         self.addCleanup(self.register.stop)
+        login = patch('qt_panel.has_saved_login', return_value=True)
+        login.start()
+        self.addCleanup(login.stop)
         self.c.start()
         self.wait()
 
@@ -108,3 +111,22 @@ class QtControllerTests(unittest.TestCase):
             self.c.save()
             self.wait()
         self.register_mock.assert_not_called()
+
+    def test_first_launch_waits_for_sign_in_without_loading(self):
+        c = PanelController(self.h.service)
+        self.addCleanup(c.shutdown)
+        with patch('qt_panel.has_saved_login', return_value=False), patch.object(c._bridge, 'load') as load:
+            c.start()
+        load.assert_not_called()
+        self.assertFalse(c.state['busy'])
+        self.assertFalse(c.state['loaded'])
+        self.assertEqual(c.state['connection'], 'Not signed in')
+        self.assertIn('Click Sign in', c.state['message'])
+
+    def test_asia_duration_choices_are_restricted(self):
+        for duration in (3600, 7200, 14400, 86400):
+            self.c.setDuration(duration)
+            self.assertEqual(self.c.state['duration'], 43200)
+        for duration in (21600, 28800, 43200):
+            self.c.setDuration(duration)
+            self.assertEqual(self.c.state['duration'], duration)

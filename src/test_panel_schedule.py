@@ -19,6 +19,7 @@ class ScheduleTests(unittest.TestCase):
             self.assertNotIn('Start-ScheduledTask', script)
             self.assertIn("yyyy-MM-ddTHH:mm:ss", script)
             self.assertIn('-LogonType Interactive -RunLevel Limited', script)
+            self.assertIn('New-ScheduledTaskSettingsSet -WakeToRun', script)
 
     def test_windows_rejection_is_reported(self):
         with tempfile.TemporaryDirectory() as folder:

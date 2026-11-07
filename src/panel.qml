@@ -199,9 +199,9 @@ Window {
                             id: durationBox
                             objectName: "durationControl"
                             enabled: !s.busy && s.loaded
-                            model: ["1 hour","2 hours","4 hours","6 hours","8 hours","12 hours","24 hours"]
-                            currentIndex: [3600,7200,14400,21600,28800,43200,86400].indexOf(s.duration)
-                            onActivated: { panelController.setDuration([3600,7200,14400,21600,28800,43200,86400][index]); currentIndex = Qt.binding(function(){return [3600,7200,14400,21600,28800,43200,86400].indexOf(s.duration);}); }
+                            model: ["6 hours","8 hours","12 hours"]
+                            currentIndex: [21600,28800,43200].indexOf(s.duration)
+                            onActivated: { panelController.setDuration([21600,28800,43200][index]); currentIndex = Qt.binding(function(){return [21600,28800,43200].indexOf(s.duration);}); }
                         }
                     }
                     Label { Layout.fillWidth: true; text: "Both categories use the existing Sun–Thu, 5:00 PM system-local schedule. Active lockout deadlines stay fixed. Unallocated accounts are excluded from future runs."; wrapMode: Text.WordWrap; color: win.muted; font.pixelSize: 11 }
@@ -213,7 +213,7 @@ Window {
                 GlassButton { objectName: "saveButton"; text: "Save changes"; primary: true; implicitHeight: 43; enabled: s.loaded && !s.busy; onClicked: panelController.save() }
                 ColumnLayout {
                     spacing: 6
-                    Label { text: s.loaded ? s.allocated + " accounts allocated" + (s.dirty ? " · Unsaved" : "") : "Loading accounts…"; color: "#ddd6ec"; font.pixelSize: 11 }
+                    Label { text: s.loaded ? s.allocated + " accounts allocated" + (s.dirty ? " · Unsaved" : "") : (s.busy ? "Loading accounts…" : "Sign in to load accounts"); color: "#ddd6ec"; font.pixelSize: 11 }
                     Label { text: "Drag to allocate · Changes apply after saving."; color: win.muted; font.pixelSize: 10 }
                 }
                 Item { Layout.fillWidth: true }

@@ -12,6 +12,9 @@ from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuickControls2 import QQuickStyle
 from PySide6.QtQuick import QQuickWindow
 from panel_bridge import PanelBridge
+from tradesea_auth import has_saved_login
+
+ASIA_DURATIONS = (21600, 28800, 43200)
 from tradesea_lockout import DURATIONS, ROOT
 
 
@@ -100,8 +103,11 @@ class PanelController(QObject):
                 dict(key=str(i), name=name, category=category,
                      reference=dict(externalAccountId='DEMO-'+str(i), accountType='RS', propFirm='LucidTrading'),
                      status=dict(verified=True, locked=False)) for i,(name,category) in enumerate(names)]))
-        else:
+        elif has_saved_login():
             self.refresh(False)
+        else:
+            self._connection = 'Not signed in'
+            self._note('Welcome. Click Sign in to connect your TradeSea account.')
 
     @Slot(bool)
     def refresh(self, interactive=False):
@@ -133,7 +139,7 @@ class PanelController(QObject):
 
     @Slot(int)
     def setDuration(self, duration):
-        if self._busy or not self._loaded or duration not in DURATIONS:
+        if self._busy or not self._loaded or duration not in ASIA_DURATIONS:
             return
         if any(a['category'] == 'asia' and a['restricted'] and a['savedDuration'] != duration for a in self._accounts):
             self._note('Asia duration is fixed while an allocated account is locked or unverified.', True)

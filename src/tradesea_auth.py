@@ -130,6 +130,11 @@ def prune_browser_metrics(profile=PROFILE_DIR):
                 pass  # Chrome may still be releasing a diagnostic file.
 
 
+def has_saved_login():
+    return any((PROFILE_DIR / relative).is_file() for relative in
+               ('Default/Network/Cookies', 'Default/Cookies'))
+
+
 def get_tradesea_cookie(*, headless: bool = True, timeout_seconds: int = 60) -> str:
     try:
         from playwright.sync_api import sync_playwright

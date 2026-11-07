@@ -52,7 +52,7 @@ $trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Sunday,Monday,Tuesday,We
 $trigger.StartBoundary = $next.ToString('yyyy-MM-ddTHH:mm:ss')
 $action = New-ScheduledTaskAction -Execute $exe -Argument '--run' -WorkingDirectory ([IO.Path]::GetDirectoryName($exe))
 $principal = New-ScheduledTaskPrincipal -UserId $user.User.Value -LogonType Interactive -RunLevel Limited
-$settings = New-ScheduledTaskSettingsSet -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 10) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+$settings = New-ScheduledTaskSettingsSet -WakeToRun -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 10) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
 Register-ScheduledTask -TaskName 'tradesea-asia' -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Description 'TradeSea automatic lockouts: Sunday-Thursday at 5 PM system-local time.' -Force | Out-Null
 $t = Get-ScheduledTask -TaskName 'tradesea-asia'
 if ($t.State -eq 'Disabled' -or $t.Actions[0].Execute -ne $exe) { throw 'Task registration could not be verified.' }
