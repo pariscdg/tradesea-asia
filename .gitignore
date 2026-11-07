@@ -8,3 +8,10 @@ __pycache__/
 self-check.json
 modified-response.json
 .vscode/
+
+build/
+build-output/
+*.spec
+backups/
+
+!TradeSeaAsia.spec

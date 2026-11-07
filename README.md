@@ -1,17 +1,30 @@
 # TradeSea Asia
 
-Open **TradeSeaAsia.exe** to choose accounts and a lockout duration.
+Download **TradeSeaAsia.exe** from the [latest release](https://github.com/pariscdg/tradesea-asia/releases/latest). Windows and installed Google Chrome are required; Python is not needed.
 
-- The panel refreshes the saved TradeSea browser login. Use **Sign in** if needed.
-- **All Lucid accounts** is selected by default, including new Lucid accounts added later.
-- Choose a duration from **1, 2, 4, 6, 8, 12, or 24 hours**. The default is 12 hours.
-- Duration is disabled while a selected account is locked or its lockout status cannot be verified.
-- Click **Save for scheduled run**. Saving does not start a lockout.
+1. Put the executable in a permanent, writable folder (for example, a TradeSeaAsia folder under your user folder), then open it.
+2. Click **Sign in** and complete login in Chrome.
+3. Choose your account categories and click **Save changes**. Save creates or updates the Windows scheduled task for your Windows account and this executable's location. Wait for the scheduling success message.
 
-The Windows task `tradesea-asia` runs Sunday–Thursday at 4:00 PM, using this computer's local time. It refreshes the saved login, applies the saved settings, confirms each account's lockout, and exits. Keep the computer available and signed in for the scheduled run.
+Keep the executable and its adjacent data files in that folder. If you move the app, open it and Save again to update the task. Your PC must be awake and you must be signed into Windows at the scheduled time; the panel itself can be closed. Missed runs are not replayed. If login expires, sign in through the app again. Scheduling failures are shown explicitly; click Save again after resolving the error.
 
-Opening the panel or changing account selection does not remove an active lockout. Each account keeps its existing deadline. There is no periodic lockout repair process.
+- Drag accounts into **Asia** or **24-hour** to choose their automated lockout duration.
+- Expand **Unallocated accounts** to allocate available accounts. Drop an account back onto this section to remove it from future scheduled runs.
+- Each account also has a move dropdown for keyboard use.
+- **Save changes** persists allocations and registers the scheduled task; dragging and saving never start a lockout.
+- **Settings** controls the Asia duration (12 hours by default). The 24-hour category always uses 24 hours.
+- Existing selections are displayed automatically. New accounts remain unallocated after the first category save.
+- Active deadlines remain enforced. Changes to an account's duration are blocked while it is locked or its status cannot be verified.
+- **Sign in** refreshes the persistent Chrome login; **Refresh** reloads accounts and statuses.
 
-The application is packaged and obfuscated. Local controls cannot prevent the computer's owner from disabling or replacing the application.
+The Windows task `tradesea-asia` still runs Sunday–Thursday at 5:00 PM using the Windows system clock and local time zone (currently Central Time, corresponding to 6:00 PM Eastern). The trigger has no fixed UTC offset, so Windows daylight-saving changes are respected. Both categories use this schedule. A 24-hour assignment is a 24-hour lockout at that run, not a continuously renewed lockout.
 
-`TradeSeaAsia.exe --self-check` runs an offline installation check without contacting TradeSea.
+`TradeSeaAsia.exe --preview` opens an offline sample panel. `--self-check` checks simulated lockouts without contacting TradeSea. `--run` is used by the scheduled task.
+
+The native panel uses Qt Quick with a transparent window and antialiased rounded edges. It does not use WebView2. Source is in `src/`. Earlier HTML/WebView and Tk UI files are retained as historical references; the active UI is `src/panel.qml` with `src/qt_panel.py`. Live login, saved settings, and deadline records are stored alongside the executable and are excluded from Git.
+
+Build using Python 3.13 with `requirements-build.txt`, then run `build.ps1`. Run regression tests with `python -m unittest discover -s src`.
+
+The glass outline is the native window boundary. Drag the top strip to move the window; use its top-right controls to minimize, maximize/restore, or close. Closing with unsaved allocations asks before discarding them.
+
+For a native rendering check, run `TradeSeaAsia.exe --ui-check`. It opens sample data briefly, verifies that pixels outside all four rounded corners have zero alpha, and records the result in `.asia-ui-check.json`. No live account changes are made.
